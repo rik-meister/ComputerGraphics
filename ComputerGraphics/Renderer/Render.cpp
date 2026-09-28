@@ -1,8 +1,13 @@
 #include "Render.h"
 
+#include <fstream>
+#include <array>
+
+#include <glm/gtc/type_ptr.hpp>
+
 namespace aie
 {
-	Geometry MakeGeometry(const Vertex* const Verts, GLsizei VertCount,const GLuint* const Indices, GLsizei IndexCount)
+	Geometry MakeGeometry(const Vertex* const Verts, GLsizei VertCount, const GLuint* const Indices, GLsizei IndexCount)
 	{
 		// create a return value object
 		Geometry NewGeo = {};
@@ -68,7 +73,7 @@ namespace aie
 		// link shader program
 		glLinkProgram(NewShad.Program);
 		// TODO: add error checking code to ensure that the shader actually links!!
-		
+
 		// delete shader
 		glDeleteShader(Vert);
 		glDeleteShader(Frag);
@@ -76,6 +81,32 @@ namespace aie
 		// return the shader object
 		return NewShad;
 	}
+	//Shader MakeShader(std::string_view VertSource, std::string_view FragSource)
+	//{
+	//	return MakeShader(VertSource.data(), FragSource.data());
+	//}
+	//Shader LoadShader(std::string_view VertPath, std::string_view FragPath)
+	//{
+	//	std::array<std::string, 2> Source;
+	//	std::array<std::string_view, 2> Paths = { VertPath, FragPath };
+
+	//	assert(Source.size() == Paths.size());
+
+	//	for (size_t i = 0; i < Source.size(); ++i)
+	//	{
+	//		std::fstream FileStream(Paths[i].data());
+	//		if (FileStream)
+	//		{
+	//			// @todo - Pre-allocate memory based on file size
+
+	//			for (std::strong_ordering Line; std::getline(FileStream, Line);)
+	//			{
+	//				Source[i] += Line + "\n";
+	//			}
+	//		}
+	//	}
+	//	return MakeShader(Source[0], Source[1]);
+	//}
 	void FreeShader(Shader& Shad)
 	{
 		glDeleteProgram(Shad.Program);
@@ -92,5 +123,9 @@ namespace aie
 
 		// draw!!
 		glDrawElements(GL_TRIANGLES, Geo.Size, GL_UNSIGNED_INT, nullptr);
+	}
+	void SetUniform(const Shader& Shad, GLuint Location, const glm::mat4& Value)
+	{
+		glProgramUniformMatrix4fv(Shad.Program, Location, 1, GL_FALSE, glm::value_ptr(Value));
 	}
 }

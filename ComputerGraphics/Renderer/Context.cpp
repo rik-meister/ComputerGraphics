@@ -52,7 +52,7 @@ namespace aie
 
 		// configure how those things work
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDepthFunc(GL_EQUAL);
+		glDepthFunc(GL_LEQUAL);
 		glFrontFace(GL_CCW);	// front faces use CCW winding order
 		glCullFace(GL_BACK);	// cull backfaces
 
