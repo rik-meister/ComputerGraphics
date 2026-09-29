@@ -16,6 +16,7 @@ namespace aie
 		glm::vec4 Pos = {};		// 0 - Position
 		glm::vec4 Color = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);	// 1 - Color
 		glm::vec2 UV = {};
+		glm::vec4 Normal = glm::vec4(0, 0, 1, 0);
 	};
 
 	struct Geometry
@@ -71,6 +72,7 @@ namespace aie
 	Texture LoadTexture(const char* TexPath);
 
 	void Draw(const Shader& Shad, const Geometry& Geo);
+	void SetUniform(const Shader& Shad, GLuint Location, const glm::vec3& Value);
 	void SetUniform(const Shader& Shad, GLuint Location, const glm::mat4& Value);
 	void SetUniform(const Shader& Shad, GLuint Location, const Texture& Value, int TextureSlot);
 }

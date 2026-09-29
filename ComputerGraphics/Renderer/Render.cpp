@@ -44,6 +44,9 @@ namespace aie
 		glEnableVertexAttribArray(2);	// color
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV)); // offset of 32 bytes
 
+		glEnableVertexAttribArray(3);	// normal
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal)); // offset of 40 bytes
+
 		// unbind buffers
 		glBindVertexArray(0);						// unbind VAO first !!
 		glBindBuffer(GL_ARRAY_BUFFER, 0);			// unbind VBO
@@ -53,6 +56,7 @@ namespace aie
 		return NewGeo;
 	}
 
+	
 	void FreeGeometry(Geometry& Geo)
 	{
 		glDeleteBuffers(1, &Geo.Ibo);
@@ -216,6 +220,10 @@ namespace aie
 
 		// draw!!
 		glDrawElements(GL_TRIANGLES, Geo.Size, GL_UNSIGNED_INT, nullptr);
+	}
+	void SetUniform(const Shader& Shad, GLuint Location, const glm::vec3& Value)
+	{
+		glProgramUniform3fv(Shad.Program, Location, 1, glm::value_ptr(Value));
 	}
 	void SetUniform(const Shader& Shad, GLuint Location, const glm::mat4& Value)
 	{

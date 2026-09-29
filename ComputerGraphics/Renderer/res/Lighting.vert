@@ -4,8 +4,10 @@
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec4 color;
 layout (location = 2) in vec2 uv;
+layout (location = 3) in vec4 normal;
 
 out vec2 vUV;
+out vec3 vNormal;
 
 // shader program uniforms
 layout (location = 0) uniform mat4 proj;
@@ -17,4 +19,6 @@ void main()
     vUV = uv;
 
     gl_Position  = proj * view * model * position;
+
+    vNormal = mat3(transpose(inverse(model))) * normal.xyz;
 }

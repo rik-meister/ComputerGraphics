@@ -6,6 +6,7 @@
 * GOAL: Put a (RED) triable on screen.
 */
 
+#include <iostream>
 #include <glm/glm.hpp>						// for glm::mat4
 #include <glm/ext/matrix_transform.hpp>		// for glm::identity
 #include <glm/ext/matrix_clip_space.hpp>	// for glm::perspective
@@ -76,8 +77,8 @@ int main()
 	TriangleModel = glm::translate(TriangleModel, glm::vec3(0, 1, 0)); // go up by 1 on Y-axis
 
 	// V - View
-	glm::mat4 Camera = glm::lookAt(glm::vec3(0, 1, 10), // eye (where is camera)
-								   glm::vec3(0, 0, 0),	// center ( what are we looking at)
+	glm::mat4 Camera = glm::lookAt(glm::vec3(0, 1, 2), // eye (where is camera)
+								   glm::vec3(0, 1, 0),	// center ( what are we looking at)
 								   glm::vec3(0, 1, 0)); // up (orientation)
 
 	// P -Projection
@@ -98,11 +99,32 @@ int main()
 	SetUniform(TexShadFromFile, 2, TriangleModel);
 	SetUniform(TexShadFromFile, 3, TestTexture, 0);
 
+	Shader LightShadFromFile = LoadShader("res/Lighting.vert", "res/Lighting.frag");
+	SetUniform(LightShadFromFile, 0, Projection);						// camera projection
+	SetUniform(LightShadFromFile, 1, Camera);							// camera view matrix
+	SetUniform(LightShadFromFile, 2, TriangleModel);					// model matrix
+	SetUniform(LightShadFromFile, 3, TestTexture, 0);					// texture
+	SetUniform(LightShadFromFile, 4, glm::vec3(0.2f, 0.2f, 0.2f));		// ambient light
+	SetUniform(LightShadFromFile, 5, glm::vec3(0, 0, -1));				// light dir
+
+	float Time = 0.0f;
+
 	while (!Window.ShouldClose())
 	{
+		// fake time (always assumes 60fps)
+		Time += 0.016f;
+
+		TriangleModel = glm::identity<glm::mat4>();
+		TriangleModel = glm::translate(TriangleModel, glm::vec3(0, 1, 0)); // go up by 1 on Y-axis
+		TriangleModel = glm::rotate(TriangleModel, Time * 1.0f, glm::vec3(0, 1, 0)); // go up by 1 on Y-axis
+
+
+		SetUniform(LightShadFromFile, 2, TriangleModel);
+
 		Window.Tick();
 		Window.Clear();
-		Draw(TexShadFromFile, BasicTriangleGeo);
+
+		Draw(LightShadFromFile, BasicTriangleGeo);
 	}
 
 	Window.Term();
