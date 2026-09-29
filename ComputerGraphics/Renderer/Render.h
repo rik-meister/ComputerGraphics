@@ -1,14 +1,21 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include <string>
+#include <string_view>
+#include <span>
+
 #include <GL/glew.h>	// for GLuint (OpenGL-friendly types)
 #include <glm/glm.hpp>	// for glm::vec4
 
 namespace aie
 {
-	struct Vertex
+	struct Vertex	// Changes to this will require changing MakeGeometry
 	{
-		glm::vec4 Pos;
+		glm::vec4 Pos = {};		// 0 - Position
+		glm::vec4 Color = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);	// 1 - Color
+		glm::vec2 UV = {};
 	};
 
 	struct Geometry
@@ -17,6 +24,11 @@ namespace aie
 		GLuint Size = 0;			// index count
 	};
 
+	struct Texture
+	{
+		GLuint Handle = 0; // texture name
+		unsigned int Width = 0, Height = 0, Channels = 0;
+	};
 	/*
 	*Wrapped version of Geometry that follows Resource Acquisition is Initialization (RAII)
 	* 
@@ -48,10 +60,17 @@ namespace aie
 	void FreeGeometry(Geometry& Geo);
 
 	Shader MakeShader(const char* VertSource, const char* FragSource);
-	//Shader MakeShader(std::string_view VertSource, std::string_view FragSource);
-	//Shader LoadShader(std::string_view VertPath, std::string_view FragPath);
+	// Returns a shader whose source code is provided via string_view which can be constructed by an old school C-String or a modern std:: string object
+
+	Shader MakeShader(std::string_view VertSource, std::string_view FragSource);
+	Shader LoadShader(std::string_view VertPath, std::string_view FragPath);
 	void FreeShader(Shader& Shad);
+
+	Texture MakeTexture(unsigned Width, unsigned Height, unsigned Channels, const unsigned char* Pixels);
+	void FreeTexture(Texture& Tex);
+	Texture LoadTexture(const char* TexPath);
 
 	void Draw(const Shader& Shad, const Geometry& Geo);
 	void SetUniform(const Shader& Shad, GLuint Location, const glm::mat4& Value);
+	void SetUniform(const Shader& Shad, GLuint Location, const Texture& Value, int TextureSlot);
 }
